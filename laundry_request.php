@@ -14,11 +14,10 @@ if(isset($_POST["submit"])){
   $wash_fold = $_POST["wash_fold"];
   $wash_iron = $_POST["wash_iron"];
   $dry_clean = $_POST["dry_clean"];
-  $price = calculate_price($wash_fold, $wash_iron, $dry_clean);
+  $price = calculate_price($conn,$wash_fold, $wash_iron, $dry_clean);
   $status = "Pending";
   
   $sql = "INSERT INTO laundry_requests (user_id, pickup_date, pickup_time, delivery_date, delivery_time, wash_fold, wash_iron, dry_clean, price, status) VALUES ('$user_id', '$pickup_date', '$pickup_time', '$delivery_date', '$delivery_time', '$wash_fold', '$wash_iron', '$dry_clean', '$price', '$status')";
-
   if(mysqli_query($conn, $sql)){
     echo "<script> alert('Laundry request submitted successfully.'); </script>";
   }
@@ -27,12 +26,17 @@ if(isset($_POST["submit"])){
   }
 }
 
-function calculate_price($wash_fold, $wash_iron, $dry_clean){
+function calculate_price($conn,$wash_fold, $wash_iron, $dry_clean){
   // Calculation logic goes here
-  
-    $wash_fold_price = 10.5; // $10.5 per pound
-    $wash_iron_price = 20.0; // $20.0 per pound
-    $dry_clean_price = 30.5; // $30.5 per item
+  $query = "SELECT wash_and_fold, wash_and_iron, dry_clean FROM price WHERE change_id = 1";
+  $result = mysqli_query($conn, $query);
+
+   // Fetch prices from the database
+    $row = mysqli_fetch_assoc($result);
+
+    $wash_fold_price =  $row['wash_and_fold']; // $10.5 per pound
+    $wash_iron_price = $row['wash_and_iron']; // $20.0 per pound
+    $dry_clean_price = $row['dry_clean']; // $30.5 per item
     
     $total_price = $wash_fold * $wash_fold_price + $wash_iron * $wash_iron_price + $dry_clean * $dry_clean_price;
     

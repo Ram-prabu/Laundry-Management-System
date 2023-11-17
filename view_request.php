@@ -100,24 +100,26 @@ $result = mysqli_query($conn, $query);
     <br>
 
     <script>
-        function makePayment(requestId, button) {
-            var confirmed = confirm("Are you sure you want to make the payment?");
-            if (confirmed) {
-                // Send an AJAX request to update the payment status
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && this.status == 200) {
-                        // Handle the response if needed
-                        console.log(this.responseText);
-                        // Remove the button from the table
-                        button.parentNode.removeChild(button);
-                    }
-                };
-                xhttp.open("GET", "update_payment.php?id=" + requestId, true);
-                xhttp.send();
-            }
+    function makePayment(requestId, button) {
+        var confirmed = confirm("Are you sure you want to make the payment?");
+        if (confirmed) {
+            // Send an AJAX request to update the payment status
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Handle the response if needed
+                    console.log(this.responseText);
+                    
+                    // Redirect to billgen.php with the request ID
+                    window.location.href = "billgen.php?requestId=" + requestId;
+                }
+            };
+            xhttp.open("GET", "update_payment.php?id=" + requestId, true);
+            xhttp.send();
         }
-    </script>
+    }
+</script>
+
 </body>
 
 </html>
